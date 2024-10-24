@@ -3,6 +3,8 @@ import { Text, View, FlatList, StyleSheet, TouchableOpacity } from "react-native
 import { Link } from "expo-router";
 import { getFirestore, collection, query, where, getDocs } from "firebase/firestore"; 
 import { getAuth } from "firebase/auth"; 
+import { QuoteComponent } from "@/components/features/quotes/application/screens/Quotes";
+import quotesArray from "@/components/features/data/quote";
 
 type Note = {
     id: string;
@@ -13,6 +15,14 @@ export function NotesView() {
     const [notes, setNotes] = useState<Note>([]);
     const db = getFirestore();
     const auth = getAuth();
+    const [quote,setQuote] = useState({})
+
+    function getRandomQuote() {
+        const randomIndex = Math.floor(Math.random() * quotesArray.length);
+         setQuote(quotesArray[randomIndex])
+    }
+    
+ 
   
     useEffect(() => {
       const fetchNotes = async () => {
@@ -30,11 +40,12 @@ export function NotesView() {
       };
   
       fetchNotes();
+      getRandomQuote();
     }, [auth.currentUser]); // Re-fetch notes if the user changes
   
     const renderNote = ({ item }) => (
-      <View style={styles.noteContainer}>
-        <Text style={styles.noteTitle}>{item.title}</Text>
+      <View style={styles.noteContainer} key={item.id}>
+        {/* <Text style={styles.noteTitle}>{item.title}</Text> */}
         <Text>{item.content}</Text>
       </View>
     );
@@ -43,11 +54,15 @@ export function NotesView() {
   
     return (
       <View style={styles.container}>
+
+        <Text style={styles.quoteContainer}>
+        <Text >"{quote?.quote}"</Text>
+        <br></br>
+        <Text>- {quote.author}</Text>
+        </Text>
+    
         <Text style={styles.header}>{user}'s Notes</Text>
 
-        <Text>
-            Algo
-        </Text>
 
 
         <FlatList
@@ -97,4 +112,11 @@ const styles = StyleSheet.create({
     color: "#007BFF",
     fontSize: 16,
   },
+  quoteContainer:{
+    margin:10,
+    padding:10,
+    textAlign:"center",
+    backgroundColor:"#808080",
+    borderRadius:10,
+  }
 });

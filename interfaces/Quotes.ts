@@ -4,3 +4,10 @@ export interface Quote {
   autor: string;
   fecha: Date;
 }
+
+
+
+export interface QuoteRequest {
+  q: string; 
+  a: string; 
+}
