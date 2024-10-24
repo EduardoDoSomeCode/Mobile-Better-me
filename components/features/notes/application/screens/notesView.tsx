@@ -56,8 +56,7 @@ export function NotesView() {
       <View style={styles.container}>
 
         <Text style={styles.quoteContainer}>
-        <Text >"{quote?.quote}"</Text>
-        <br></br>
+        <Text >"{quote.quote}"</Text>
         <Text>- {quote.author}</Text>
         </Text>
     
