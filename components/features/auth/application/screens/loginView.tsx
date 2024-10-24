@@ -1,10 +1,31 @@
+import { firebaseApp } from "@/config/firebase";
+import { Link, useRouter } from "expo-router";
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from "react";
-import { Text, TextInput, View, StyleSheet, TouchableOpacity } from "react-native";
-import { Link } from "expo-router";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export function LoginView() {
+    const router = useRouter(); // Initialize the router for navigation
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const auth = getAuth(firebaseApp); // Initialize the Firebase Authentication
+
+const handleLogin = async (email:string, password:string) => {
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    router.push('/notes'); 
+
+    console.log("Logged in as: ", user.email);
+  } catch (error) {
+        console.log("Problem with the login");
+        
+  }
+};
+
 
   return (
     <View style={styles.container}>
@@ -25,7 +46,8 @@ export function LoginView() {
         secureTextEntry
       />
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity  onPress={()=>handleLogin(email,password)}  style={styles.button}>
+    
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
 

@@ -37,7 +37,6 @@ export default function RootLayout() {
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="auth" />
-        <Stack.Screen name="notes" />
         <Stack.Screen name="+not-found" />
       </Stack>
     </ThemeProvider>

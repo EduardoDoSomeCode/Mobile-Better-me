@@ -1,36 +1,65 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View, FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
+import { getFirestore, collection, query, where, getDocs } from "firebase/firestore"; 
+import { getAuth } from "firebase/auth"; 
 
+type Note = {
+    id: string;
+    content: string;
+    uid: string; // Asegúrate de incluir otros campos que estés usando
+  };
 export function NotesView() {
-  const [notes, setNotes] = useState([
-    { id: '1', title: "Meeting with client", content: "Discuss project requirements." },
-    { id: '2', title: "Grocery shopping", content: "Buy vegetables and fruits." },
-    { id: '3', title: "Workout", content: "Leg day at the gym." },
-  ]);
+    const [notes, setNotes] = useState<Note>([]);
+    const db = getFirestore();
+    const auth = getAuth();
+  
+    useEffect(() => {
+      const fetchNotes = async () => {
+        const user = auth.currentUser;
+        if (user) {
+          try {
+            const q = query(collection(db, "notes"), where("uid", "==", user.uid));
+            const querySnapshot = await getDocs(q);
+            const notesData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setNotes(notesData);
+          } catch (error) {
+            console.error("Error al recuperar notas:", error);
+          }
+        }
+      };
+  
+      fetchNotes();
+    }, [auth.currentUser]); // Re-fetch notes if the user changes
+  
+    const renderNote = ({ item }) => (
+      <View style={styles.noteContainer}>
+        <Text style={styles.noteTitle}>{item.title}</Text>
+        <Text>{item.content}</Text>
+      </View>
+    );
+  
+    const user = "Christian"; // Puedes usar el nombre real del usuario aquí.
+  
+    return (
+      <View style={styles.container}>
+        <Text style={styles.header}>{user}'s Notes</Text>
 
-//   const renderNote = ({ item }) => (
-//     <View style={styles.noteContainer}>
-//       <Text style={styles.noteTitle}>{item.title}</Text>
-//       <Text>{item.content}</Text>
-//     </View>
-//   );
-let user = "Eduardo"
-  return (
-    <View style={styles.container}>
-      <Text style={styles.header}>{user}'s Notes</Text>
-      
-        {/* <FlatList
-            data={notes}
-            renderItem={renderNote}
-            keyExtractor={(item) => item.id}
-        /> */}
+        <Text>
+            Algo
+        </Text>
 
-      <Link href="/notes/create" style={styles.link}>
-        <Text style={styles.addNoteText}>Agregar nota</Text>
-      </Link>
-    </View>
-  );
+
+        <FlatList
+          data={notes}
+          renderItem={renderNote}
+          keyExtractor={(item) => item.id}
+        />
+        <Link href="/notes/create" style={styles.link}>
+          <Text style={styles.addNoteText}>Agregar nota</Text>
+        </Link>
+      </View>
+    );
 }
 
 const styles = StyleSheet.create({
