@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Modal, StyleSheet, TextInput, View,FlatList ,Text, TouchableOpacity } from 'react-native';
 import { getFirestore, collection, addDoc, getDocs, query, where, deleteDoc, doc, updateDoc } from "firebase/firestore"; 
 import { getAuth } from 'firebase/auth';
+import { router } from 'expo-router';
 
 
 
@@ -125,6 +126,9 @@ const saveEdit = async () => {
         renderItem={renderTodo}
         keyExtractor={(item) => item.id}
       />
+
+
+      <Button title="Back to notes" onPress={()=>{router.push("/notes")}} />
       <Modal visible={isEditing} animationType="slide">
         <View style={styles.modalContainer}>
           <TextInput

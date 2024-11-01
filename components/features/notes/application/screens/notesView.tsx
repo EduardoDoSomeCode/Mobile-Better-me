@@ -2,9 +2,10 @@ import quotesArray from "@/components/features/data/quote";
 import { useUserContext } from "@/components/store/useContextUser";
 import { Link } from "expo-router";
 import { getAuth } from "firebase/auth";
-import { collection, getDocs, getFirestore, query, where } from "firebase/firestore";
+import { collection, getDocs, getFirestore, query, where, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Modal, TextInput, Button } from "react-native";
 
 type Note = {
     id: string;
@@ -50,45 +51,123 @@ export function NotesView() {
       fetchNotes();
       getRandomQuote();
     }, [auth.currentUser]); // Re-fetch notes if the user changes
-  
-    const renderNote = ({ item }: { item: Note }) => (
-      <View style={styles.noteContainer} key={item.id}>
-        {/* <Text style={styles.noteTitle}>{item.title}</Text> */}
-        <Text>{item.content}</Text>
-      </View>
-    );
-  
-  
-    return (
-      <View style={styles.container}>
 
-        <Text style={styles.quoteContainer}>
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentNote, setCurrentNote] = useState<Note | null>(null);
+  const [newContent, setNewContent] = useState("");
+
+  const handleEdit = (id: string) => {
+    const noteToEdit = notes.find(note => note.id === id);
+    if (noteToEdit) {
+      setCurrentNote(noteToEdit);
+      setNewContent(noteToEdit.content);
+      setModalVisible(true);
+    }
+  };
+
+  const handleSave = async () => {
+    if (currentNote) {
+      const updatedNote = { ...currentNote, content: newContent };
+      setNotes(prevNotes => prevNotes.map(note => note.id === currentNote.id ? updatedNote : note));
+      
+      // Update the note in Firestore
+      const noteDocRef = doc(db, "notes", currentNote.id);
+      try {
+        await updateDoc(noteDocRef, { content: newContent });
+        console.log(`Note with id: ${currentNote.id} updated successfully`);
+      } catch (error) {
+        console.error("Error updating note:", error);
+      }
+      setModalVisible(false);
+      setCurrentNote(null);
+    }
+  };
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, "notes", id));
+      setNotes(prevNotes => prevNotes.filter(note => note.id !== id));
+      console.log(`Deleted note with id: ${id}`);
+    } catch (error) {
+      console.error("Error deleting note:", error);
+    }
+  };
+
+
+
+  const renderNote = ({ item }: { item: Note }) => (
+    // <Link href={`/notes/${item.id}`} asChild>
+    <View style={styles.noteContainer} key={item.id}>
+      {/* <Text style={styles.noteTitle}>{item.title}</Text> */}
+      <Text>{item.content}</Text>
+
+      <TouchableOpacity 
+      onPress={() => handleEdit(item.id)}
+       >
+        <Text>Edit</Text>
+      </TouchableOpacity>
+
+
+      <TouchableOpacity 
+      onPress={() => handleDelete(item.id)}
+       >
+        <Text>Delete</Text>
+      </TouchableOpacity>
+              
+      </View>
+    // </Link>
+  );
+
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.quoteContainer}>
         {quote && (
           <>
             <Text>"{quote.quote}"</Text>
             <Text>- {quote.author}</Text>
           </>
         )}
-        </Text>
-    
-        <Text style={styles.header}>{user}'s Notes</Text>
+      </Text>
+      <Text style={styles.header}>{user}'s Notes</Text>
+      <FlatList
+        data={notes}
+        renderItem={renderNote}
+        keyExtractor={(item) => item.id}
+      />
+      <Link href="/notes/create" style={styles.link}>
+        <Text style={styles.addNoteText}>Agregar nota</Text>
+      </Link>
+      <Link href="/todos" style={styles.link}>
+        <Text style={styles.addNoteText}>Agregar Todos</Text>
+      </Link>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.modalView}>
+          <TextInput
+            style={styles.input}
+            value={newContent}
+            onChangeText={setNewContent}
+          />
+          <Button title="Save" onPress={handleSave} />
+          <Button title="Cancel" onPress={() => setModalVisible(false)} />
+        </View>
+      </Modal>
+    </View>
+  );
 
 
 
-        <FlatList
-          data={notes}
-          renderItem={renderNote}
-          keyExtractor={(item) => item.id}
-        />
-        <Link href="/notes/create" style={styles.link}>
-          <Text style={styles.addNoteText}>Agregar nota</Text>
-        </Link>
 
-        <Link href="/todos" style={styles.link}>
-          <Text style={styles.addNoteText}>Agregar Todos</Text>
-        </Link>
-      </View>
-    );
+
+
+  
+
 }
 
 const styles = StyleSheet.create({
@@ -126,11 +205,33 @@ const styles = StyleSheet.create({
     color: "#007BFF",
     fontSize: 16,
   },
-  quoteContainer:{
-    margin:10,
-    padding:10,
-    textAlign:"center",
-    backgroundColor:"#808080",
-    borderRadius:10,
+  quoteContainer: {
+    margin: 10,
+    padding: 10,
+    textAlign: "center",
+    backgroundColor: "#808080",
+    borderRadius: 10,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
   }
 });
