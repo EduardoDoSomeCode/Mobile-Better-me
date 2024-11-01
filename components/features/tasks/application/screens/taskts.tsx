@@ -4,7 +4,7 @@ import { Button, Modal, StyleSheet, TextInput, View,FlatList ,Text, TouchableOpa
 import { getFirestore, collection, addDoc, getDocs, query, where, deleteDoc, doc, updateDoc } from "firebase/firestore"; 
 import { getAuth } from 'firebase/auth';
 import { router } from 'expo-router';
-
+import { Picker } from '@react-native-picker/picker';
 
 
 const TodoScreen = () => {
@@ -74,6 +74,7 @@ const saveEdit = async () => {
         await addDoc(collection(db, "todos"), {
           uid: user.uid,
           title: currentTodo.title,
+          priority: currentTodo.priority  || "",
           completed: false,
           createdAt: new Date(),
         });
@@ -93,7 +94,7 @@ const saveEdit = async () => {
   };
 
   const renderTodo = ({ item }: { item: Todo }) => (
-    <View style={styles.todoItem}>
+    <View style={[styles.todoItem, getPriorityStyle(item?.priority)]}>
       <Text style={styles.todoText}>{item.title}</Text>
       <View style={styles.buttonGroup}>
         <TouchableOpacity onPress={() => handleEdit(item)} style={styles.editButton}>
@@ -105,19 +106,54 @@ const saveEdit = async () => {
       </View>
     </View>
   );
+  const getPriorityStyle = (priority: string) => {
+    switch (priority.toLocaleLowerCase()) {
+      case "high":
+        return { backgroundColor: 'red' };
+      case "medium":
+        return { backgroundColor: 'yellow' };
+      case "low":
+        return { backgroundColor: 'green' };
+      default:
+        return {};
+    }
+  };
 
   return (
     <View style={styles.container}>
       <TextInput
    value={currentTodo?.title || ""}
-   onChangeText={(text) =>
-     setCurrentTodo((prev) => (prev ? { ...prev, title: text } : { title: text, id: '', priority: 0, completed: false }))
+   onChangeText={
+    (text) => setCurrentTodo((prev) => (prev ? { ...prev, title: text } : { title: text, id: '', priority: "", completed: false }))
    }
    style={styles.input}
    placeholder="Enter todo title"
       >
 
       </TextInput>
+
+
+
+
+      <View style={styles.container}>
+      <Text>Select a Priority:</Text>
+      <Picker
+        selectedValue={currentTodo?.title}
+        onValueChange={
+          (text) => setCurrentTodo((prev) => (prev ? { ...prev, priority: text } : { title: text, id: '', priority: "", completed: false }))
+
+        }
+        style={styles.picker}
+      >
+        <Picker.Item label="Select priority" value="" />
+        <Picker.Item label="High" value="high" />
+        <Picker.Item label="Medium" value="medium" />
+        <Picker.Item label="Low" value="low" />
+      </Picker>
+    </View>
+
+
+
       <Button title="Add Todo" onPress={handleAddTodo} />
       
 
@@ -137,6 +173,8 @@ const saveEdit = async () => {
             style={styles.input}
             placeholder="Edit todo"
           />
+          
+          
           <Button title="Save" onPress={saveEdit} />
           {/* <Button title="Save" onPress={handleAddTodo} /> */}
 
@@ -157,6 +195,11 @@ const styles = StyleSheet.create({
   deleteButton: { paddingHorizontal: 8, backgroundColor: '#fdd', borderRadius: 5 },
   modalContainer: { flex: 1, justifyContent: 'center', padding: 20 },
   input: { borderColor: '#ddd', borderWidth: 1, padding: 8, marginBottom: 12 },
+  picker: {
+    height: 50,
+    width: '100%',
+    marginVertical: 10,
+  },
 });
 
 export default TodoScreen;

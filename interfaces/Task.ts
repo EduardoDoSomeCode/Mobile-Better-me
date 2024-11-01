@@ -1,6 +1,6 @@
 export interface Todo {
   id: string;
   title: string;
-  priority: number;
+  priority: string;
   completed: boolean;
 }

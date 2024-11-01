@@ -28,27 +28,45 @@ export function NotesView() {
         const randomIndex = Math.floor(Math.random() * quotesArray.length);
          setQuote(quotesArray[randomIndex])
     }
+
+
+
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const handleSearch = (query: string) => {
+      setSearchQuery(query);
+      if (query === "") {
+        fetchNotes();
+      } else {
+        const filteredNotes = notes.filter(note =>
+          note.title.toLowerCase().includes(query.toLowerCase())
+        );
+        setNotes(filteredNotes);
+      }
+    };
+
+    const fetchNotes = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const q = query(collection(db, "notes"), where("uid", "==", user.uid));
+          const querySnapshot = await getDocs(q);
+          const notesData = querySnapshot.docs.map(doc => {
+            const data = doc.data();
+            return { id: doc.id, title:data.title, content: data.content, uid: data.uid };
+          });
+          setNotes(notesData);
+        } catch (error) {
+          console.error("Error al recuperar notas:", error);
+        }
+      }
+    };
+
     
  
   
     useEffect(() => {
-      const fetchNotes = async () => {
-        const user = auth.currentUser;
-        if (user) {
-          try {
-            const q = query(collection(db, "notes"), where("uid", "==", user.uid));
-            const querySnapshot = await getDocs(q);
-            const notesData = querySnapshot.docs.map(doc => {
-              const data = doc.data();
-              return { id: doc.id, title:data.title, content: data.content, uid: data.uid };
-            });
-            setNotes(notesData);
-          } catch (error) {
-            console.error("Error al recuperar notas:", error);
-          }
-        }
-      };
-  
+
       fetchNotes();
       getRandomQuote();
     }, [auth.currentUser]); // Re-fetch notes if the user changes
@@ -140,6 +158,16 @@ export function NotesView() {
         )}
       </Text>
       <Text style={styles.header}>{user}'s Notes</Text>
+ 
+ 
+
+      <TextInput 
+        placeholder="Search notes"
+        style={styles.input}
+        value={searchQuery}
+        onChangeText={handleSearch}
+      />
+
       <FlatList
         data={notes}
         renderItem={renderNote}
