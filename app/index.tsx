@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, ActivityIndicator,  StyleSheet } from "react-native";
 
 
 export default  function SplashScreen(){
@@ -20,11 +20,30 @@ export default  function SplashScreen(){
         setLoaded(true)
     },[])
     return(
-        <View>
+        <View style={styles.container}>
+      {loaded ? (
 
-            <Text>
-                Load ....
-            </Text>
-        </View>
+<Text style={styles.text}>¡Carga completa!</Text>
+
+        
+      ) : (
+        <ActivityIndicator size="large" color="#3d85c6" />
+      )}
+    </View>
     )
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+  },
+  text: {
+    fontSize: 18,
+    color: '#333',
+  },
+});
+

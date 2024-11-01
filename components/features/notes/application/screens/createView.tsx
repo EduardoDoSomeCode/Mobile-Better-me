@@ -5,18 +5,20 @@ import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 export function CreateNotesView() {
-    const [note, setNote] = useState("");
+  const auth = getAuth();
+
+  const user = auth.currentUser;
+
+  const [note, setNote] = useState("");
     const db = getFirestore();
-    const auth = getAuth();
 
   const handleSaveNote = async() => {
-    const user = auth.currentUser;
     if (user) {
       try {
         await addDoc(collection(db, "notes"), {
-          uid: user.uid, // ID del usuario
-          content: note,
-          createdAt: new Date(),
+          uid: user.uid, // id del suuario
+          content: note, // contenido de la nota
+          createdAt: new Date(), // añadir fecha de creacion 
         });
         console.log("Nota guardada:", note);
         setNote("");
@@ -27,6 +29,12 @@ export function CreateNotesView() {
       console.log("No hay usuario autenticado");
     }
   };
+
+  const validateNote = ()=>{
+    if(note.trim() ===""){
+      return
+    }
+  }
 
   return (
     <View style={styles.container}>

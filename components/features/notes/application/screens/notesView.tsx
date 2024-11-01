@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Text, View, FlatList, StyleSheet, TouchableOpacity } from "react-native";
-import { Link } from "expo-router";
-import { getFirestore, collection, query, where, getDocs } from "firebase/firestore"; 
-import { getAuth } from "firebase/auth"; 
-import { QuoteComponent } from "@/components/features/quotes/application/screens/Quotes";
 import quotesArray from "@/components/features/data/quote";
+import { Link } from "expo-router";
+import { getAuth } from "firebase/auth";
+import { collection, getDocs, getFirestore, query, where } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 
 type Note = {
     id: string;
@@ -71,6 +70,10 @@ export function NotesView() {
         />
         <Link href="/notes/create" style={styles.link}>
           <Text style={styles.addNoteText}>Agregar nota</Text>
+        </Link>
+
+        <Link href="/todos" style={styles.link}>
+          <Text style={styles.addNoteText}>Agregar Todos</Text>
         </Link>
       </View>
     );
