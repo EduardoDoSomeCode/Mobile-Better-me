@@ -9,6 +9,7 @@ import { Modal, TextInput, Button } from "react-native";
 
 type Note = {
     id: string;
+    title:string;
     content: string;
     uid: string; // Asegúrate de incluir otros campos que estés usando
   };
@@ -39,7 +40,7 @@ export function NotesView() {
             const querySnapshot = await getDocs(q);
             const notesData = querySnapshot.docs.map(doc => {
               const data = doc.data();
-              return { id: doc.id, content: data.content, uid: data.uid };
+              return { id: doc.id, title:data.title, content: data.content, uid: data.uid };
             });
             setNotes(notesData);
           } catch (error) {
@@ -55,12 +56,14 @@ export function NotesView() {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentNote, setCurrentNote] = useState<Note | null>(null);
   const [newContent, setNewContent] = useState("");
+  const [newTitle, setNewTitle] = useState("");
 
   const handleEdit = (id: string) => {
     const noteToEdit = notes.find(note => note.id === id);
     if (noteToEdit) {
       setCurrentNote(noteToEdit);
       setNewContent(noteToEdit.content);
+      setNewTitle(noteToEdit.title);
       setModalVisible(true);
     }
   };
@@ -73,7 +76,7 @@ export function NotesView() {
       // Update the note in Firestore
       const noteDocRef = doc(db, "notes", currentNote.id);
       try {
-        await updateDoc(noteDocRef, { content: newContent });
+        await updateDoc(noteDocRef, { content: newContent , title:newTitle} );
         console.log(`Note with id: ${currentNote.id} updated successfully`);
       } catch (error) {
         console.error("Error updating note:", error);
@@ -97,11 +100,16 @@ export function NotesView() {
   const renderNote = ({ item }: { item: Note }) => (
     // <Link href={`/notes/${item.id}`} asChild>
     <View style={styles.noteContainer} key={item.id}>
-      {/* <Text style={styles.noteTitle}>{item.title}</Text> */}
+      <Text style={styles.noteTitle}>{item.title}</Text>
+      <View>
       <Text>{item.content}</Text>
 
-      <TouchableOpacity 
+      </View>
+
+<View style={styles.buttonGroupFlex}>
+<TouchableOpacity 
       onPress={() => handleEdit(item.id)}
+      style={styles.editButton}
        >
         <Text>Edit</Text>
       </TouchableOpacity>
@@ -109,9 +117,12 @@ export function NotesView() {
 
       <TouchableOpacity 
       onPress={() => handleDelete(item.id)}
+      style={styles.deleteButton}
        >
         <Text>Delete</Text>
       </TouchableOpacity>
+  
+</View>
               
       </View>
     // </Link>
@@ -149,11 +160,19 @@ export function NotesView() {
         }}
       >
         <View style={styles.modalView}>
-          <TextInput
+       
+            <TextInput
+            style={styles.input}
+            value={newTitle}
+            onChangeText={setNewTitle}
+            placeholder="Title"
+            />
+            <TextInput
             style={styles.input}
             value={newContent}
             onChangeText={setNewContent}
-          />
+            placeholder="Content"
+            />
           <Button title="Save" onPress={handleSave} />
           <Button title="Cancel" onPress={() => setModalVisible(false)} />
         </View>
@@ -191,6 +210,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 3,
+    display: "flex",
   },
   noteTitle: {
     fontSize: 18,
@@ -233,5 +253,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5
-  }
+  },
+  deleteButton:{
+     padding: 14,
+     backgroundColor: '#fdd',
+    borderRadius: 5 },
+    editButton: { 
+      marginRight: 8,
+       padding: 14,
+        backgroundColor: '#eee',
+         borderRadius: 5 },
+
+  buttonGroupFlex: { flexDirection: 'row',display:"flex", marginTop: 10,  },
+
 });

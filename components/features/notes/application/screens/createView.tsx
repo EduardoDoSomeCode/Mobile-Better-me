@@ -10,6 +10,8 @@ export function CreateNotesView() {
   const user = auth.currentUser;
 
   const [note, setNote] = useState("");
+  const [title, setTitle] = useState("");
+
     const db = getFirestore();
 
   const handleSaveNote = async() => {
@@ -17,11 +19,12 @@ export function CreateNotesView() {
       try {
         await addDoc(collection(db, "notes"), {
           uid: user.uid, // id del suuario
+          title:title,
           content: note, // contenido de la nota
           createdAt: new Date(), // añadir fecha de creacion 
         });
-        console.log("Nota guardada:", note);
         setNote("");
+        setTitle("");
       } catch (error) {
         console.error("Error al guardar la nota:", error);
       }
@@ -30,15 +33,16 @@ export function CreateNotesView() {
     }
   };
 
-  const validateNote = ()=>{
-    if(note.trim() ===""){
-      return
-    }
-  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Crear una nueva nota</Text>
+      <TextInput
+      style={styles.input}
+      value={title}
+      placeholder={"Título de la nota"}
+      onChangeText={setTitle}
+      />
       <TextInput
         style={styles.input}
         placeholder="Escribe tu nota aquí..."
