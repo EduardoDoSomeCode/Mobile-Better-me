@@ -1,7 +1,7 @@
 import { Todo } from '@/interfaces/Task';
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, StyleSheet, TextInput, View,FlatList ,Text, TouchableOpacity } from 'react-native';
-import { getFirestore, collection, addDoc, getDocs, query, where } from "firebase/firestore"; 
+import { getFirestore, collection, addDoc, getDocs, query, where, deleteDoc, doc, updateDoc } from "firebase/firestore"; 
 import { getAuth } from 'firebase/auth';
 
 
@@ -18,7 +18,7 @@ const TodoScreen = () => {
   const user = auth.currentUser;
 
   useEffect(() => {
-    // loadTodos();
+    loadTodos();
     console.log("Cargando notas");
     
   }, []);
@@ -33,7 +33,9 @@ const TodoScreen = () => {
         const fetchedTodos = await getDocs(q);
         const todosWithDefaults = fetchedTodos.docs.map((doc) => ({
           id: doc.id,
-          ...doc.data(),
+          title: doc.data().title,
+          priority: doc.data().priority,
+          completed: doc.data().completed,
         }));
     
         setTodos(todosWithDefaults);
@@ -42,52 +44,55 @@ const TodoScreen = () => {
       }
   };
 
-  const handleDelete = async (id:string) => {
-//     await deleteTodo(id);
-//     loadTodos();
-//   };
 
-//   const handleEdit = (todo:any) => {
-//     setCurrentTodo(todo);
-//     setNewText(todo.title);
-//     setIsEditing(true);
-//   };
+  const handleDelete = async (id: string) => {
+    const todoDoc = doc(db, "todos", id);
+    await deleteDoc(todoDoc);
+    loadTodos();
+  };
 
-//   const saveEdit = async () => {
-//     await editTodo(currentTodo?.id, newText);
-//     setIsEditing(false);
-//     setCurrentTodo(undefined);
-//     loadTodos();
-console.log("Funcion para borrar");
+  const handleEdit = (todo:any) => {
+    setCurrentTodo(todo);
+    setNewText(todo.title);
+    setIsEditing(true);
+  };
 
-   };
+const saveEdit = async () => {
+  if (currentTodo) {
+    const todoDoc = doc(db, "todos", currentTodo.id);
+    await updateDoc(todoDoc, { title: newText });
+    setIsEditing(false);
+    setCurrentTodo(null);
+    loadTodos();
+  }
+};
 
   const handleAddTodo = async () => {
     // await addTodo("New Task");
     if (user && currentTodo?.title) {
-        try {
-          await addDoc(collection(db, "todos"), {
-            uid: user.uid,
-            title: currentTodo.title,
-            completed: false,
-            createdAt: new Date(),
-          });
-          console.log("Todo saved:", currentTodo.title);
-          
-          // Clear the input by resetting currentTodo
-          setCurrentTodo({ ...currentTodo, title: "" });
-          
-          // Optionally reload todos
-          loadTodos();
-        } catch (error) {
-          console.error("Error saving todo:", error);
-        }
-      } else {
-        console.log("No authenticated user or empty title");
+      try {
+        await addDoc(collection(db, "todos"), {
+          uid: user.uid,
+          title: currentTodo.title,
+          completed: false,
+          createdAt: new Date(),
+        });
+        console.log("Todo saved:", currentTodo.title);
+        
+        // Clear the input by resetting currentTodo
+        setCurrentTodo({ ...currentTodo, title: "" });
+        
+        // Optionally reload todos
+        loadTodos();
+      } catch (error) {
+        console.error("Error saving todo:", error);
       }
+    } else {
+      console.log("No authenticated user or empty title");
+    }
   };
 
-  const renderTodo = ({ item }) => (
+  const renderTodo = ({ item }: { item: Todo }) => (
     <View style={styles.todoItem}>
       <Text style={styles.todoText}>{item.title}</Text>
       <View style={styles.buttonGroup}>
@@ -106,7 +111,7 @@ console.log("Funcion para borrar");
       <TextInput
    value={currentTodo?.title || ""}
    onChangeText={(text) =>
-     setCurrentTodo((prev) => (prev ? { ...prev, title: text } : { title: text }))
+     setCurrentTodo((prev) => (prev ? { ...prev, title: text } : { title: text, id: '', priority: 0, completed: false }))
    }
    style={styles.input}
    placeholder="Enter todo title"
@@ -129,8 +134,8 @@ console.log("Funcion para borrar");
             style={styles.input}
             placeholder="Edit todo"
           />
-          {/* <Button title="Save" onPress={saveEdit} /> */}
-          <Button title="Save" onPress={handleAddTodo} />
+          <Button title="Save" onPress={saveEdit} />
+          {/* <Button title="Save" onPress={handleAddTodo} /> */}
 
           <Button title="Cancel" onPress={() => setIsEditing(false)} />
         </View>
