@@ -1,4 +1,5 @@
 import quotesArray from "@/components/features/data/quote";
+import { useUserContext } from "@/components/store/useContextUser";
 import { Link } from "expo-router";
 import { getAuth } from "firebase/auth";
 import { collection, getDocs, getFirestore, query, where } from "firebase/firestore";
@@ -11,10 +12,15 @@ type Note = {
     uid: string; // Asegúrate de incluir otros campos que estés usando
   };
 export function NotesView() {
-    const [notes, setNotes] = useState<Note>([]);
+    const [notes, setNotes] = useState<Note[]>([]);
     const db = getFirestore();
     const auth = getAuth();
-    const [quote,setQuote] = useState({})
+    const { state } = useUserContext();
+    const userName = state.user?.email;
+
+    const user = userName.replace(/@[\w.]+/, "");
+    console.log("User:", state.user.email);
+    const [quote, setQuote] = useState<{ quote: string; author: string } | null>(null)
 
     function getRandomQuote() {
         const randomIndex = Math.floor(Math.random() * quotesArray.length);
@@ -30,7 +36,10 @@ export function NotesView() {
           try {
             const q = query(collection(db, "notes"), where("uid", "==", user.uid));
             const querySnapshot = await getDocs(q);
-            const notesData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const notesData = querySnapshot.docs.map(doc => {
+              const data = doc.data();
+              return { id: doc.id, content: data.content, uid: data.uid };
+            });
             setNotes(notesData);
           } catch (error) {
             console.error("Error al recuperar notas:", error);
@@ -42,21 +51,24 @@ export function NotesView() {
       getRandomQuote();
     }, [auth.currentUser]); // Re-fetch notes if the user changes
   
-    const renderNote = ({ item }) => (
+    const renderNote = ({ item }: { item: Note }) => (
       <View style={styles.noteContainer} key={item.id}>
         {/* <Text style={styles.noteTitle}>{item.title}</Text> */}
         <Text>{item.content}</Text>
       </View>
     );
   
-    const user = "Christian"; // Puedes usar el nombre real del usuario aquí.
   
     return (
       <View style={styles.container}>
 
         <Text style={styles.quoteContainer}>
-        <Text >"{quote.quote}"</Text>
-        <Text>- {quote.author}</Text>
+        {quote && (
+          <>
+            <Text>"{quote.quote}"</Text>
+            <Text>- {quote.author}</Text>
+          </>
+        )}
         </Text>
     
         <Text style={styles.header}>{user}'s Notes</Text>

@@ -1,27 +1,47 @@
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer } from 'react';
 
-// Define the type for your user data
-interface User {
-  email: string;
-  // Add other properties as needed
-}
+// Initial state
+const initialState = {
+  isAuthenticated: false,
+  user: null,
+};
 
-// Define the context type
-interface UserContextType {
-  user: User | null; // User can be null if not logged in
-  setUser: (user: User | null) => void; // Function to update user
-}
+// Reducer function to manage state changes
+const userReducer = (state, action) => {
+  switch (action.type) {
+    case 'LOGIN':
+      return {
+        ...state,
+        isAuthenticated: true,
+        user: action.payload,
+      };
+    case 'LOGOUT':
+      return {
+        ...state,
+        isAuthenticated: false,
+        user: null,
+      };
+    default:
+      return state;
+  }
+};
 
-// Create the UserContext with default value
-export const UserContext = createContext<UserContextType | undefined>(undefined);
+// Create context
+const UserContext = createContext();
 
-// Create a provider component
-export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null); // State to hold user data
+// Context provider component
+export const UserProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(userReducer, initialState);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ state, dispatch }}>
       {children}
     </UserContext.Provider>
   );
 };
+
+// Custom hook to use the UserContext
+export const useUserContext = () => {
+  return useContext(UserContext);
+};
+

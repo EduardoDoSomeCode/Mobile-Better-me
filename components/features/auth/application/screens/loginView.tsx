@@ -3,9 +3,11 @@ import { Link, useRouter } from "expo-router";
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useUserContext}  from "../../../../store/useContextUser"
 
 export function LoginView() {
-    const router = useRouter(); // Initialize the router for navigation
+  const { dispatch } = useUserContext();
+  const router = useRouter(); // Initialize the router for navigation
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,9 +19,12 @@ const handleLogin = async (email:string, password:string) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
+    dispatch({ type: "LOGIN", payload: user }); // Dispatch the user to the context
     router.push('/notes'); 
 
     console.log("Logged in as: ", user.email);
+    
+
   } catch (error) {
         console.log("Problem with the login");
         

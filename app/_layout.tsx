@@ -4,8 +4,8 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { UserProvider } from '@/components/store/useContextUser';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -26,6 +26,9 @@ export default function RootLayout() {
   }
 
   return (
+
+<UserProvider>
+
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack
         screenOptions={{
@@ -39,5 +42,6 @@ export default function RootLayout() {
         <Stack.Screen name="+not-found" />
       </Stack>
     </ThemeProvider>
+    </UserProvider>
   );
 }

@@ -5,7 +5,6 @@ import { getFirestore, collection, addDoc, getDocs, query, where, deleteDoc, doc
 import { getAuth } from 'firebase/auth';
 
 
-// import { addTodo, deleteTodo, editTodo, fetchTodos } from '../utils/tasks.util';
 
 const TodoScreen = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
