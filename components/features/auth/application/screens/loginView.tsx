@@ -2,7 +2,7 @@ import { firebaseApp } from "@/config/firebase";
 import { Link, useRouter } from "expo-router";
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from "react";
-import { StyleSheet, TextInput, TouchableOpacity, View, Image } from "react-native";
+import { StyleSheet, TextInput, TouchableOpacity, View, Image, Text } from "react-native";
 import { useUserContext } from "../../../../store/useContextUser";
 
 
@@ -31,7 +31,8 @@ export function LoginView() {
 
   return (
     <View style={styles.container}>
-      <Image source={require("../../../../logo/logo.jpeg")} style={styles.logo} /> {/* Usando el logo importado */}
+      <Image source={require("../../../../logo/logo.png")} style={styles.logo} /> {}
+      <Image source={require("../../../../logo/texto1.png")} style={styles.logo} /> {}
 
 
       <TextInput
@@ -49,7 +50,10 @@ export function LoginView() {
         secureTextEntry
       />
 
-      
+<TouchableOpacity  onPress={()=>handleLogin(email,password)}  style={styles.button}>
+
+<Text style={styles.buttonText}>Login</Text>
+</TouchableOpacity>
 
       <Link href="/" style={styles.link}>Home</Link>
     </View>
