@@ -9,6 +9,23 @@ import { UserProvider } from '@/components/store/useContextUser';
 
 SplashScreen.preventAutoHideAsync();
 
+// Define ambos temas con fondo azul fuerte
+const CustomDarkTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: 'rgb(0, 51, 102)', // Azul fuerte
+  },
+};
+
+const CustomDefaultTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: 'rgb(0, 51, 102)', // Azul fuerte
+  },
+};
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
@@ -26,22 +43,18 @@ export default function RootLayout() {
   }
 
   return (
-
-<UserProvider>
-
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack
-        screenOptions={{
-          headerShown:false
-
-        }
-        }
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="auth" />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </ThemeProvider>
+    <UserProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? CustomDarkTheme : CustomDefaultTheme}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="auth" />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+      </ThemeProvider>
     </UserProvider>
   );
 }

@@ -2,40 +2,38 @@ import { firebaseApp } from "@/config/firebase";
 import { Link, useRouter } from "expo-router";
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useUserContext}  from "../../../../store/useContextUser"
+import { StyleSheet, TextInput, TouchableOpacity, View, Image } from "react-native";
+import { useUserContext } from "../../../../store/useContextUser";
 
+
+//import logo from "@/components/logo/logo.jpeg"
 export function LoginView() {
   const { dispatch } = useUserContext();
-  const router = useRouter(); // Initialize the router for navigation
+  const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const auth = getAuth(firebaseApp); // Initialize the Firebase Authentication
+  const auth = getAuth(firebaseApp);
 
-const handleLogin = async (email:string, password:string) => {
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      dispatch({ type: "LOGIN", payload: user });
+      router.push('/notes');
 
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    dispatch({ type: "LOGIN", payload: user }); // Dispatch the user to the context
-    router.push('/notes'); 
-
-    console.log("Logged in as: ", user.email);
-    
-
-  } catch (error) {
-        console.log("Problem with the login");
-        
-  }
-};
-
+      console.log("Logged in as: ", user.email);
+    } catch (error) {
+      console.log("Problem with the login");
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Better me</Text>
-      
+      <Image source={require("../../../../logo/logo.jpeg")} style={styles.logo} /> {/* Usando el logo importado */}
+
+
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -51,10 +49,7 @@ const handleLogin = async (email:string, password:string) => {
         secureTextEntry
       />
 
-      <TouchableOpacity  onPress={()=>handleLogin(email,password)}  style={styles.button}>
-    
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
+      
 
       <Link href="/" style={styles.link}>Home</Link>
     </View>
@@ -67,10 +62,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#f5f5f5"
+    backgroundColor: "#051923", 
   },
-  title: {
-    fontSize: 24,
+  logo: {
+    width: 150, // Ajusta el ancho de la imagen
+    height: 150, // Ajusta la altura de la imagen
     marginBottom: 20,
   },
   input: {
