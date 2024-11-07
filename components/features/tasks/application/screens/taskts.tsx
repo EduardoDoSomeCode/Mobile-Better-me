@@ -109,11 +109,11 @@ const saveEdit = async () => {
   const getPriorityStyle = (priority: string) => {
     switch (priority.toLocaleLowerCase()) {
       case "high":
-        return { backgroundColor: 'red' };
+        return { backgroundColor: '#50C878' };
       case "medium":
-        return { backgroundColor: 'yellow' };
+        return { backgroundColor: '#ffd966' };
       case "low":
-        return { backgroundColor: 'green' };
+        return { backgroundColor: '#f4cccc' };
       default:
         return {};
     }
@@ -136,7 +136,7 @@ const saveEdit = async () => {
 
 
       <View style={styles.container}>
-      <Text>Select a Priority:</Text>
+      <Text style={styles.textStyle} >Select a Priority:</Text>
       <Picker
         selectedValue={currentTodo?.title}
         onValueChange={
@@ -187,18 +187,44 @@ const saveEdit = async () => {
 
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
-  todoItem: { flexDirection: 'row', justifyContent: 'space-between', padding: 16, borderBottomWidth: 1, borderColor: '#ddd' },
-  todoText: { fontSize: 16 },
+  container: {
+     flex: 1,
+      padding: 16,
+      backgroundColor: "#0f0e17",
+      color: "#fffffe", 
+  },
+  todoItem: { 
+    flexDirection: 'row',
+     justifyContent: 'space-between',
+      padding: 16,
+        borderColor: '#ddd',
+       },
+  todoText: {
+     fontSize: 16,       
+   },
   buttonGroup: { flexDirection: 'row' },
-  editButton: { marginRight: 8, paddingHorizontal: 8, backgroundColor: '#eee', borderRadius: 5 },
+  editButton: { 
+    marginRight: 8,
+     paddingHorizontal: 8,
+      backgroundColor: '#eee',
+       borderRadius: 5 },
   deleteButton: { paddingHorizontal: 8, backgroundColor: '#fdd', borderRadius: 5 },
   modalContainer: { flex: 1, justifyContent: 'center', padding: 20 },
-  input: { borderColor: '#ddd', borderWidth: 1, padding: 8, marginBottom: 12 },
+  input: {
+     borderColor: '#ddd',
+     borderWidth: 1, padding: 8,
+      marginBottom: 12 ,
+      marginTop:50,
+    color: "#fffffe"
+  },
   picker: {
     height: 50,
     width: '100%',
     marginVertical: 10,
+    color: "white"
+  },
+  textStyle: {
+    color: '#fffffe',
   },
 });
 

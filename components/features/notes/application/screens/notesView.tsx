@@ -120,7 +120,7 @@ export function NotesView() {
     <View style={styles.noteContainer} key={item.id}>
       <Text style={styles.noteTitle}>{item.title}</Text>
       <View>
-      <Text>{item.content}</Text>
+      <Text style={styles.noteContent}>{item.content}</Text>
 
       </View>
 
@@ -149,14 +149,14 @@ export function NotesView() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.quoteContainer}>
+      <View style={styles.quoteContainer}>
         {quote && (
           <>
             <Text>"{quote.quote}"</Text>
-            <Text>- {quote.author}</Text>
+            <Text style={styles.quoteText}>- {quote.author}</Text>
           </>
         )}
-      </Text>
+      </View>
       <Text style={styles.header}>{user}'s Notes</Text>
  
  
@@ -178,6 +178,13 @@ export function NotesView() {
       </Link>
       <Link href="/todos" style={styles.link}>
         <Text style={styles.addNoteText}>Agregar Todos</Text>
+      </Link>
+
+      <Link href="/habits" style={styles.link}>
+        <Text style={styles.addNoteText}>Agregar habitos</Text>
+      </Link>
+      <Link href="/profile" style={styles.link}>
+        <Text style={styles.addNoteText}>Ir al perfil</Text>
       </Link>
       <Modal
         animationType="slide"
@@ -218,20 +225,33 @@ export function NotesView() {
 }
 
 const styles = StyleSheet.create({
+
   container: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#0f0e17",
+    color: "#fffffe",
   },
+  title: {
+    fontSize: 24,
+    marginBottom: 20,
+    color: "#fffffe",
+
+  },
+
   header: {
     fontSize: 24,
     marginBottom: 20,
     textAlign: "center",
+    color: "#fffffe",
+
   },
   noteContainer: {
     padding: 15,
     marginBottom: 15,
-    backgroundColor: "#fff",
+    backgroundColor: "#232946",
     borderRadius: 5,
     shadowColor: "#000",
     shadowOpacity: 0.1,
@@ -244,6 +264,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 5,
+    color: "#fffffe",
+
+  },
+  noteContent:{
+    color: "#b8c1ec",
   },
   link: {
     marginTop: 20,
@@ -254,11 +279,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   quoteContainer: {
-    margin: 10,
+    margin: 30,
     padding: 10,
-    textAlign: "center",
-    backgroundColor: "#808080",
-    borderRadius: 10,
+    backgroundColor: "#232946",
+    borderRadius: 20,
+  },
+  quoteText: {
+    textAlign: "right",
+    color: "#eebbc3",
   },
   input: {
     height: 40,
@@ -266,6 +294,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 10,
+    backgroundColor: "#232946",
+    width: "80%",
+    color: "#fffffe",
+    borderRadius:10,
+
   },
   modalView: {
     margin: 20,

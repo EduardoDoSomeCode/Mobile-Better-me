@@ -4,8 +4,10 @@ import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useUserContext}  from "../../../../store/useContextUser"
+import { useTheme } from "@react-navigation/native";
 
 export function LoginView() {
+  const {colors} = useTheme();
   const { dispatch } = useUserContext();
   const router = useRouter(); // Initialize the router for navigation
 
@@ -67,11 +69,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#f5f5f5"
+    backgroundColor: "#0f0e17",
+    color: "#fffffe",
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
+    color: "#fffffe",
+
   },
   input: {
     width: "100%",
@@ -80,6 +85,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 5,
+    color: "#fffffe",
+
   },
   button: {
     backgroundColor: "#007BFF",

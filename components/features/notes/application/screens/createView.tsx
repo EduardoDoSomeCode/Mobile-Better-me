@@ -4,9 +4,10 @@ import { Link } from "expo-router";
 import { getFirestore, collection, addDoc } from "firebase/firestore"; 
 import { getAuth } from "firebase/auth";
 
+
+
 export function CreateNotesView() {
   const auth = getAuth();
-
   const user = auth.currentUser;
 
   const [note, setNote] = useState("");
@@ -62,10 +63,13 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: "center",
+    backgroundColor: "#0f0e17",
+    color: "#fffffe",
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
+    color: "#fffffe",
   },
   input: {
     borderColor: "#ccc",
@@ -73,6 +77,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 20,
     borderRadius: 5,
+    color: "#fffffe",
   },
   notesContainer:{
     padding:10,
@@ -88,3 +93,42 @@ const styles = StyleSheet.create({
 
   }
 });
+
+
+
+// title: {
+//   fontSize: 24,
+//   marginBottom: 20,
+//   color: "#fffffe",
+
+// },
+
+// header: {
+//   fontSize: 24,
+//   marginBottom: 20,
+//   textAlign: "center",
+//   color: "#fffffe",
+
+// },
+// noteContainer: {
+//   padding: 15,
+//   marginBottom: 15,
+//   backgroundColor: "#232946",
+//   borderRadius: 5,
+//   shadowColor: "#000",
+//   shadowOpacity: 0.1,
+//   shadowOffset: { width: 0, height: 2 },
+//   shadowRadius: 4,
+//   elevation: 3,
+//   display: "flex",
+// },
+// noteTitle: {
+//   fontSize: 18,
+//   fontWeight: "bold",
+//   marginBottom: 5,
+//   color: "#fffffe",
+
+// },
+// noteContent:{
+//   color: "#b8c1ec",
+// },
