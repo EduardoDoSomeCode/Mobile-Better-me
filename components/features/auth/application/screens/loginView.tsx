@@ -22,7 +22,7 @@ const handleLogin = async (email:string, password:string) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     dispatch({ type: "LOGIN", payload: user }); // Dispatch the user to the context
-    router.push('/notes'); 
+    router.push('/interfaceMenu'); 
 
     console.log("Logged in as: ", user.email);
     

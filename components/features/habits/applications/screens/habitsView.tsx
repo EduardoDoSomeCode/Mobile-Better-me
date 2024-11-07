@@ -1,8 +1,9 @@
+import { useUserContext } from '@/components/store/useContextUser';
 import { Link } from 'expo-router';
-import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import { Dimensions } from "react-native";
+import { getAuth } from 'firebase/auth';
+import { addDoc, collection, getDocs, getFirestore, query, where } from 'firebase/firestore';
+import React, { useEffect } from 'react';
+import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 
 // import { AreaChart, Grid } from 'react-native-svg-charts'
@@ -12,15 +13,30 @@ import { LineChart } from 'react-native-chart-kit';
 // import { LineChart } from 'react-native-chartjs';
 
 
+
   const screenWidth = Dimensions.get("window").width;
 
-// Sample habits data
-const habitsData = [
-    { id: '1', habit: 'Exercise for 30 minutes' },
-    { id: '2', habit: 'Read 20 pages of a book' },
-    { id: '3', habit: 'Meditate for 10 minutes' },
-    { id: '4', habit: 'Drink 2 liters of water' },
-];
+
+
+const db = getFirestore();
+
+// Function to add a habit to Firebase
+const addHabit = async (habitTitle: string, days: number) => {
+    try {
+        await addDoc(collection(db, 'habits'),{
+            title: habitTitle,
+            days: days,
+            createdAt: new Date(),
+        }
+        )
+        console.log('Habit added successfully');
+    } catch (error) {
+        console.error('Error adding habit: ', error);
+    }
+};
+
+// Example usage
+// addHabit('Exercise for 30 minutes', 1);
 const data = [
     { x: 1, y: 2 },
     { x: 2, y: 4 },
@@ -37,16 +53,50 @@ const data = [
 //       }}
 //     />
 //   );
+
+interface Habit {
+    id: string;
+    habit: string;
+    days: number;
+}
 export const HabitsView = () => {
+    const [habits, setHabits] = React.useState<Habit[]>([]);
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    const fetchHabits = async () => {
+        if (user) {
+            try {
+              const q = query(collection(db, "habits"), where("uid", "==", user.uid));
+              const querySnapshot = await getDocs(q);
+              const habitsData = querySnapshot.docs.map(doc => {
+                const data = doc.data();
+                return { id: doc.id, habit: data.title, days: data.days, uid: data.uid };
+              });
+              setHabits(habitsData);
+            } catch (error) {
+              console.error("Error al recuperar notas:", error);
+            }
+          }
+    }
+
+    useEffect(() => {
+        fetchHabits();
+    }, [auth.currentUser]);
     return (
         <View style={styles.container}>
 
             <Link href={"/notes"}>
             <Text style={styles.title}>Volver a notas</Text>
             </Link>
+
+            <Link href={"/habits/create"}>
+             <Text style={styles.title}>Crear habito</Text>
+            
+            </Link>
             <Text style={styles.title}>Your Habits</Text>
             <FlatList
-                data={habitsData}
+                data={habits}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <View style={styles.habitItem}>
