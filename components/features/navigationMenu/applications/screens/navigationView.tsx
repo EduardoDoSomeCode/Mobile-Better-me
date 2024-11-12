@@ -1,34 +1,36 @@
+import { Image } from "expo-image";
 import { Link } from "expo-router";
-import { Text, View, StyleSheet } from "react-native";
-
+import { StyleSheet, Text, View } from "react-native";
 export const NavigationView = () => {
   return (
     <View style={styles.container}>
       <View style={styles.containerNotes}>
         <Link href={"/notes"}>
-          <Text>Notas</Text>
+        <Text style={{ paddingTop: 10 }}>Notas</Text>
+
         </Link>
       </View>
 
       <View style={styles.containerTodos}>
         <Link href={"/todos"}>
-          <Text>Tareas</Text>
+        <Text>Tareas</Text>
+
         </Link>
       </View>
 
       <View style={styles.containerHabits}>
         <Link href={"/habits"}>
-          <Text>Habitos</Text>
+        <Text>Habitos</Text>
+
         </Link>
       </View>
 
       <View style={styles.containerProfile}>
         <Link href={"/profile"}>
-          <Text>Perfil</Text>
+        <Text>Perfil</Text>
+
         </Link>
       </View>
-
-
     </View>
   );
 };
@@ -36,13 +38,14 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     flexDirection: "column",
-
-    textAlign: "center", 
-    gap: 10,
+    textAlign: "center",
+    gap: 15,
     flex: 1,
     padding: 20,
     backgroundColor: "#0f0e17",
     color: "#fffffe",
+    marginTop: 50,
+    overflow: "scroll",
   },
   title: {
     fontSize: 24,
@@ -71,23 +74,35 @@ const styles = StyleSheet.create({
     color: "#fffffe",
   },
   containerNotes: {
-    padding: 20,
+    padding: 40,
     backgroundColor: "#f25f4c",
     borderRadius: 10,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   containerTodos: {
-    padding: 20,
+    padding: 40,
     backgroundColor: "#e53170",
     borderRadius: 10,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   containerHabits: {
-    padding: 20,
+    padding: 40,
     backgroundColor: "#bae8e8",
     borderRadius: 10,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   containerProfile: {
-    padding: 20,
+    padding: 40,
     backgroundColor: "#f25042",
     borderRadius: 10,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

@@ -12,6 +12,7 @@ const TodoScreen = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentTodo, setCurrentTodo] = useState<Todo | null>(null);
   const [newText, setNewText] = useState('');
+  const[error, setError] = useState('');
   const db = getFirestore();
   const auth = getAuth();
 
@@ -68,6 +69,7 @@ const saveEdit = async () => {
 };
 
   const handleAddTodo = async () => {
+    if(!validateTodo())return
     // await addTodo("New Task");
     if (user && currentTodo?.title) {
       try {
@@ -92,6 +94,13 @@ const saveEdit = async () => {
       console.log("No authenticated user or empty title");
     }
   };
+  const validateTodo = () => {
+    if (currentTodo?.title === "") {
+      setError("El titulo no puede estar vacio");
+      return false;
+    }
+    return true;
+  }
 
   const renderTodo = ({ item }: { item: Todo }) => (
     <View style={[styles.todoItem, getPriorityStyle(item?.priority)]}>
@@ -152,10 +161,11 @@ const saveEdit = async () => {
       </Picker>
     </View>
 
-
+        
 
       <Button title="Add Todo" onPress={handleAddTodo} />
       
+      <Text style={styles.error}>{error}</Text>
 
       <FlatList
         data={todos}
@@ -222,6 +232,10 @@ const styles = StyleSheet.create({
     width: '100%',
     marginVertical: 10,
     color: "white"
+  },
+  error:{
+    color:"#ff0000",
+    marginBottom:10,
   },
   textStyle: {
     color: '#fffffe',

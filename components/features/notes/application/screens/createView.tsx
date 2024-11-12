@@ -12,10 +12,12 @@ export function CreateNotesView() {
 
   const [note, setNote] = useState("");
   const [title, setTitle] = useState("");
-
+  const [error, setError] = useState("");
     const db = getFirestore();
 
   const handleSaveNote = async() => {
+
+    if(!valdateNote()) return;
     if (user) {
       try {
         await addDoc(collection(db, "notes"), {
@@ -34,10 +36,18 @@ export function CreateNotesView() {
     }
   };
 
-
+  const valdateNote = () => {
+    if (note === "" && title === "") {
+      setError("Rellenar todos los campos correctamente");
+      return false;
+    }
+    setError("");
+    return true;
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Crear una nueva nota</Text>
+      <Text style={styles.error}>{error}</Text>
       <TextInput
       style={styles.input}
       value={title}
@@ -91,6 +101,10 @@ const styles = StyleSheet.create({
     backgroundColor:"#990000",
     padding:10,
 
+  },
+  error:{
+    color:"#ff0000",
+    marginBottom:10,
   }
 });
 

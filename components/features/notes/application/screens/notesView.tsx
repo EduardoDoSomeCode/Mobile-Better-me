@@ -17,6 +17,7 @@ export function NotesView() {
     const [notes, setNotes] = useState<Note[]>([]);
     const db = getFirestore();
     const auth = getAuth();
+    
     const { state } = useUserContext();
     const userName = state.user?.email;
 
@@ -75,6 +76,7 @@ export function NotesView() {
   const [currentNote, setCurrentNote] = useState<Note | null>(null);
   const [newContent, setNewContent] = useState("");
   const [newTitle, setNewTitle] = useState("");
+  const [ error, setError] = useState("");
 
   const handleEdit = (id: string) => {
     const noteToEdit = notes.find(note => note.id === id);
@@ -87,6 +89,7 @@ export function NotesView() {
   };
 
   const handleSave = async () => {
+    if (!validateNote()) return;
     if (currentNote) {
       const updatedNote = { ...currentNote, content: newContent };
       setNotes(prevNotes => prevNotes.map(note => note.id === currentNote.id ? updatedNote : note));
@@ -103,7 +106,16 @@ export function NotesView() {
       setCurrentNote(null);
     }
   };
+
+const validateNote = () => {
+  if (newTitle === "" || newContent === "") {
+    setError("El titulo y el contenido no pueden estar vacios");
+    return false;
+  }
+  return true;
+}
   const handleDelete = async (id: string) => {
+    
     try {
       await deleteDoc(doc(db, "notes", id));
       setNotes(prevNotes => prevNotes.filter(note => note.id !== id));
@@ -176,16 +188,7 @@ export function NotesView() {
       <Link href="/notes/create" style={styles.link}>
         <Text style={styles.addNoteText}>Agregar nota</Text>
       </Link>
-      <Link href="/todos" style={styles.link}>
-        <Text style={styles.addNoteText}>Agregar Todos</Text>
-      </Link>
-
-      <Link href="/habits" style={styles.link}>
-        <Text style={styles.addNoteText}>Agregar habitos</Text>
-      </Link>
-      <Link href="/profile" style={styles.link}>
-        <Text style={styles.addNoteText}>Ir al perfil</Text>
-      </Link>
+      
       <Modal
         animationType="slide"
         transparent={true}

@@ -7,17 +7,18 @@ import { useUserContext}  from "../../../../store/useContextUser"
 import { useTheme } from "@react-navigation/native";
 
 export function LoginView() {
-  const {colors} = useTheme();
   const { dispatch } = useUserContext();
   const router = useRouter(); // Initialize the router for navigation
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const auth = getAuth(firebaseApp); // Initialize the Firebase Authentication
 
 const handleLogin = async (email:string, password:string) => {
 
+  if (!validateFields()) return; // Validate the fields
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
@@ -32,6 +33,27 @@ const handleLogin = async (email:string, password:string) => {
         
   }
 };
+
+const validateFields = () => {
+  
+  switch (true) {
+    case email === "" && password === "":
+      setError("Rellenar todos los campos correctamente");
+      return false;
+    case email === "":
+      setError("El campo de correo electrónico está vacío");
+      return false;
+    case password === "":
+      setError("El campo de contraseña está vacío");
+      return false;
+    case !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email):
+      setError("El correo electrónico no es válido");
+      return false;
+    default:
+      setError("");
+      return true;
+  }
+}
 
 
   return (
@@ -52,6 +74,13 @@ const handleLogin = async (email:string, password:string) => {
         onChangeText={setPassword}
         secureTextEntry
       />
+      
+      <Text style={styles.textWarning}>
+        {
+          error
+        }
+        </Text>
+
 
       <TouchableOpacity  onPress={()=>handleLogin(email,password)}  style={styles.button}>
     
@@ -104,4 +133,9 @@ const styles = StyleSheet.create({
     color: "#007BFF",
     marginTop: 10,
   },
+  textWarning:{
+    color: "#ff0000",
+    padding: 15,
+    fontSize: 18,
+  }
 });
