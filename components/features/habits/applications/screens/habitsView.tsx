@@ -86,9 +86,7 @@ export const HabitsView = () => {
     return (
         <View style={styles.container}>
 
-            <Link href={"/notes"}>
-            <Text style={styles.title}>Volver a notas</Text>
-            </Link>
+            
 
             <Link href={"/habits/create"}>
              <Text style={styles.title}>Crear habito</Text>
@@ -146,6 +144,10 @@ export const HabitsView = () => {
                 }}
                 style={{ marginVertical: 8, borderRadius: 16 }}
             />
+
+<Link href={"/interfaceMenu"}>
+            <Text style={styles.simpleButton}>Volver a notas</Text>
+            </Link>
         </View>
 
 
@@ -197,4 +199,13 @@ const styles = StyleSheet.create({
         backgroundColor: "#0f0e17",
         color: "#fffffe",
     },
+    simpleButton: {
+        backgroundColor: "#007BFF",
+        padding: 10,
+        width: "100%",
+        alignItems: "center",
+        borderRadius: 5,
+        marginBottom: 20,
+        marginTop: 20,
+    }
 });

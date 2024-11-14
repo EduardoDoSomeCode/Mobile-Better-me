@@ -188,6 +188,10 @@ const validateNote = () => {
       <Link href="/notes/create" style={styles.link}>
         <Text style={styles.addNoteText}>Agregar nota</Text>
       </Link>
+
+      <Link href="/interfaceMenu" style={styles.link}>
+        <Text style={styles.addNoteText}>Volver a Inicio</Text>
+      </Link>
       
       <Modal
         animationType="slide"

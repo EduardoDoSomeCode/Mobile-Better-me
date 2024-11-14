@@ -174,7 +174,7 @@ const saveEdit = async () => {
       />
 
 
-      <Button title="Back to notes" onPress={()=>{router.push("/notes")}} />
+      <Button title="Back to menu" onPress={()=>{router.push("/interfaceMenu")}} />
       <Modal visible={isEditing} animationType="slide">
         <View style={styles.modalContainer}>
           <TextInput

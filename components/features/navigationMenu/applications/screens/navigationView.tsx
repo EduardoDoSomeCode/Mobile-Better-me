@@ -1,108 +1,142 @@
-import { Image } from "expo-image";
+import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { Dimensions, Platform, Pressable, StyleSheet, Text, View } from "react-native";
+
+
+const screenWidth = Dimensions.get("window").width;
+
 export const NavigationView = () => {
   return (
     <View style={styles.container}>
-      <View style={styles.containerNotes}>
-        <Link href={"/notes"}>
-        <Text style={{ paddingTop: 10 }}>Notas</Text>
+    <Text style={styles.title}>Better-me</Text>
 
+    <View style={styles.cardContainer}>
+      <Pressable style={[styles.card, styles.habitsCard, Platform.OS === "web" && { cursor: "pointer" }]}>
+        <Ionicons name="leaf" size={50} color="#FFFFFF" style={styles.icon} />
+        <Link href="/habits" style={styles.link}>
+          <Text style={styles.cardText}>Habits</Text>
         </Link>
-      </View>
+      </Pressable>
 
-      <View style={styles.containerTodos}>
-        <Link href={"/todos"}>
-        <Text>Tareas</Text>
-
+      <Pressable style={[styles.card, styles.notesCard, Platform.OS === "web" && { cursor: "pointer" }]}>
+        <Ionicons name="pencil" size={50} color="#FFFFFF" style={styles.icon} />
+        <Link href="/notes" style={styles.link}>
+          <Text style={styles.cardText}>Notes</Text>
         </Link>
-      </View>
+      </Pressable>
 
-      <View style={styles.containerHabits}>
-        <Link href={"/habits"}>
-        <Text>Habitos</Text>
-
+      <Pressable style={[styles.card, styles.todosCard, Platform.OS === "web" && { cursor: "pointer" }]}>
+        <Ionicons name="checkbox" size={50} color="#FFFFFF" style={styles.icon} />
+        <Link href="/todos" style={styles.link}>
+          <Text style={styles.cardText}>To-Dos</Text>
         </Link>
-      </View>
+      </Pressable>
 
-      <View style={styles.containerProfile}>
-        <Link href={"/profile"}>
-        <Text>Perfil</Text>
-
+      {/* <Pressable style={[styles.card, styles.quotesCard, Platform.OS === "web" && { cursor: "pointer" }]}>
+        <Ionicons name="list" size={50} color="#FFFFFF" style={styles.icon} />
+        <Link href="/quotes" style={styles.link}>
+          <View style={styles.quoteContent}>
+            <Text style={styles.quoteTitle}>Quotes</Text>
+            <Text style={styles.quoteSubtitle}>Get inspired daily</Text>
+          </View>
         </Link>
-      </View>
+      </Pressable> */}
+
+      <Pressable style={[styles.card, styles.profileCard, Platform.OS === "web" && { cursor: "pointer" }]}>
+        <Link href="/profile" style={styles.link}>
+          <Ionicons name="person" size={25} color="#FFFFFF" style={styles.icon} />
+          <Text style={styles.cardText}>Profile</Text>
+        </Link>
+      </Pressable>
     </View>
+  </View>
   );
 };
+
+
+
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
-    flexDirection: "column",
-    textAlign: "center",
-    gap: 15,
     flex: 1,
-    padding: 20,
     backgroundColor: "#0f0e17",
-    color: "#fffffe",
-    marginTop: 50,
-    overflow: "scroll",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#b8c1ec",
+    fontSize: Platform.OS === "web" ? 60 : 48,
+    color: "#FFFFFF",
+    marginBottom: 40,
   },
-  habitItem: {
+  cardContainer: {
+    width: "100%",
+    alignItems: "center",
+    flexDirection: Platform.OS === "web" ? "row" : "row",
+    flexWrap: "wrap",
+    justifyContent: "space-evenly",
+  },
+  card: {
+    width: Platform.OS === "web" ? "20%" : screenWidth * 0.4,
+    height: Platform.OS === "web" ? screenWidth * 0.2 : screenWidth * 0.4,
+    borderRadius: 15,
+    justifyContent: "space-around",
+    alignItems: "center",
+    marginVertical: 10,
+    paddingVertical: 15,
+    flexDirection: "column",
+  },
+  habitsCard: {
+    backgroundColor: "#34C759",
+  },
+  notesCard: {
+    backgroundColor: "#007AFF",
+  },
+  todosCard: {
+    backgroundColor: "#AF52DE",
+  },
+  quotesCard: {
+    display: "flex",
+    flexDirection: "column",
+    backgroundColor: "#FF9500",
+    justifyContent: "center",
+    alignItems: "center",
     padding: 10,
-    borderRadius: 5,
-    marginBottom: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1,
-    elevation: 2, // For Android shadow
-    backgroundColor: "#0f0e17",
   },
-  habitText: {
-    fontSize: 18,
-    color: "#fffffe",
+  profileCard: {
+    backgroundColor: "#0055FF",
+    width: Platform.OS === "web" ? "90%" : screenWidth * 0.9,
+    height: Platform.OS === "web" ? screenWidth * 0.1 : screenWidth * 0.25,
+    borderRadius: 15,
   },
-  calendar: {
-    marginTop: 20,
-    backgroundColor: "#0f0e17",
-    color: "#fffffe",
+  cardText: {
+    color: "#FFFFFF",
+    fontSize: 25,
+    textAlign: "center",
+    marginTop: 5,
   },
-  containerNotes: {
-    padding: 40,
-    backgroundColor: "#f25f4c",
-    borderRadius: 10,
+  quoteContent: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent  : "center",
+    flexDirection: "column",
   },
-  containerTodos: {
-    padding: 40,
-    backgroundColor: "#e53170",
-    borderRadius: 10,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+  quoteTitle: {
+    fontSize: 20,
+    color: "#FFFFFF",
+    fontWeight: "bold",
+    textAlign: "center",
   },
-  containerHabits: {
-    padding: 40,
-    backgroundColor: "#bae8e8",
-    borderRadius: 10,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+  quoteSubtitle: {
+    fontSize: 12,
+    color: "#CCCCCC",
   },
-  containerProfile: {
-    padding: 40,
-    backgroundColor: "#f25042",
-    borderRadius: 10,
-    display: "flex",
+  link: {
+    width: "100%",
     alignItems: "center",
-    justifyContent: "center",
+    textAlign: "center",
+  },
+  icon: {
+    marginBottom: 0.5,
+    marginTop: 30,
   },
 });
